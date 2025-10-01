@@ -3,7 +3,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'AgriMitra',
-  description: 'Made with ❤️ by Akshay',
+  description: 'Made with ❤️',
 }
 
 export default function RootLayout({
