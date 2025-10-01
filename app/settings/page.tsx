@@ -214,7 +214,7 @@ export default function SettingsPage() {
         </Card>
 
         {/* App Version */}
-        <div className="text-center text-xs text-gray-500 pt-4">AgriMitra • Made with ❤️ by Akshay</div>
+        <div className="text-center text-xs text-gray-500 pt-4">AgriMitra • </div>
       </div>
     </div>
   )
