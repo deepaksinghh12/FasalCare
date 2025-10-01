@@ -78,7 +78,3 @@ Make sure you have Node.js and npm installed on your machine.
     ```
     Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
----
-Your Name - [Your Portfolio/LinkedIn](https://example.com) - your.email@example.com
-
-Project Link: [https://github.com/your_username/project-kisan](https://github.com/your_username/project-kisan)
