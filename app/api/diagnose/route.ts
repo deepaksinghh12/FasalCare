@@ -1,20 +1,19 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+export const runtime = "nodejs";
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
     try {
-        const data = await request.formData();
-        const file = data.get("image") as File;
+        const formData = await req.formData();
+        const file = formData.get("image") as File;
 
         if (!file) {
-            return NextResponse.json(
-                { error: "No image provided" },
-                { status: 400 }
-            );
+            return NextResponse.json({ error: "No image uploaded" }, { status: 400 });
         }
 
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+        
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
         const base64Image = buffer.toString("base64");
@@ -26,23 +25,11 @@ export async function POST(request: Request) {
     Return ONLY a valid JSON object (no markdown, no backticks) with this structure:
     {
       "disease": "Name of disease or 'Healthy'",
-      "confidence": number (0-100),
-      "severity": "Low" | "Moderate" | "High" (if healthy, use "None"),
-      "description": "Brief explanation of the condition",
-      "symptoms": ["symptom1", "symptom2"],
-      "remedies": ["remedy1", "remedy2"],
-      "prevention": ["prevention1", "prevention2"]
+      "description": "Brief description of the problem",
+      "treatment": "Organic and Chemical control measures",
+      "prevention": "Tips to prevent this in future"
     }
-    If the image is not a plant, return:
-    {
-      "disease": "Not a Plant",
-      "confidence": 0,
-      "severity": "None",
-      "description": "Please upload a clear image of a plant leaf or crop.",
-      "symptoms": [],
-      "remedies": [],
-      "prevention": []
-    }`;
+    `;
 
         const result = await model.generateContent([
             prompt,
@@ -53,12 +40,9 @@ export async function POST(request: Request) {
                 },
             },
         ]);
-
         const response = await result.response;
         const text = response.text();
 
-        // Clean up markdown if present (e.g. ```json ... ```)
-        const cleanedText = text.replace(/```json/g, "").replace(/```/g, "").trim();
 
         try {
             const jsonResponse = JSON.parse(cleanedText);

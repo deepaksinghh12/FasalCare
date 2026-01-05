@@ -1,11 +1,12 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+export const runtime = "nodejs";
 
 export async function POST(req: Request) {
     try {
         const { crop, date, region, language } = await req.json();
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
         // Fallback to 'gemini-pro' as 'gemini-1.5-flash' returned 404
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
