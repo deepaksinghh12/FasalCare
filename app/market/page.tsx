@@ -1,111 +1,67 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import { ArrowLeft, Search, TrendingUp, TrendingDown, Minus } from "lucide-react"
+import { ArrowLeft, Search, TrendingUp, TrendingDown, Minus, Loader2 } from "lucide-react"
 
 export default function MarketPage() {
   const [isListening, setIsListening] = useState(false)
-  const [query, setQuery] = useState("")
+  const [query, setQuery] = useState("Wheat")
   const [selectedCrop, setSelectedCrop] = useState<string | null>(null)
 
-  const marketData = [
-    {
-      name: "Tomato",
-      nameHi: "टमाटर",
-      price: 45,
-      unit: "kg",
-      change: +12,
-      trend: "up",
-      market: "Azadpur Mandi",
-    },
-    {
-      name: "Onion",
-      nameHi: "प्याज",
-      price: 28,
-      unit: "kg",
-      change: -5,
-      trend: "down",
-      market: "Nashik Mandi",
-    },
-    {
-      name: "Rice (Basmati)",
-      nameHi: "चावल (बासमती)",
-      price: 95,
-      unit: "kg",
-      change: +2,
-      trend: "up",
-      market: "Karnal Mandi",
-    },
-    {
-      name: "Potato",
-      nameHi: "आलू",
-      price: 22,
-      unit: "kg",
-      change: +8,
-      trend: "up",
-      market: "Agra Mandi",
-    },
-    {
-      name: "Wheat",
-      nameHi: "गेहूं",
-      price: 2250,
-      unit: "quintal",
-      change: 0,
-      trend: "stable",
-      market: "Khanna Mandi",
-    },
-    {
-      name: "Cotton",
-      nameHi: "कपास",
-      price: 6800,
-      unit: "quintal",
-      change: -200,
-      trend: "down",
-      market: "Rajkot Mandi",
-    },
-  ]
+  // Real Data State
+  const [marketData, setMarketData] = useState<any[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [marketSummary, setMarketSummary] = useState<string | null>(null)
+
+  const fetchPrices = async (commodity: string) => {
+    setLoading(true)
+    setError(null)
+    setMarketSummary(null)
+    try {
+      // Defaulting to Rajasthan for now as per original code context, could be dynamic later
+      const response = await fetch(`/api/mandi?state=Rajasthan&commodity=${commodity}`)
+      const data = await response.json()
+
+      if (response.ok) {
+        setMarketData(data.prices)
+        setMarketSummary(data.summary)
+      } else {
+        setError(data.error || "Failed to fetch prices")
+        setMarketData([])
+      }
+    } catch (err) {
+      setError("Network error. Please try again.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Initial fetch
+  useEffect(() => {
+    fetchPrices(query)
+  }, [])
+
+  const handleSearch = () => {
+    if (query.trim()) {
+      fetchPrices(query)
+    }
+  }
 
   const handleVoiceSearch = () => {
     setIsListening(true)
-    // Simulate voice recognition
     setTimeout(() => {
       setIsListening(false)
-      setQuery("Tomato price today")
-      setSelectedCrop("Tomato")
+      const voiceQuery = "Mustard" // Simulation
+      setQuery(voiceQuery)
+      fetchPrices(voiceQuery)
     }, 2000)
   }
-
-  const getTrendIcon = (trend: string) => {
-    switch (trend) {
-      case "up":
-        return <TrendingUp className="w-4 h-4 text-green-600" />
-      case "down":
-        return <TrendingDown className="w-4 h-4 text-red-600" />
-      default:
-        return <Minus className="w-4 h-4 text-gray-600" />
-    }
-  }
-
-  const getTrendColor = (trend: string) => {
-    switch (trend) {
-      case "up":
-        return "text-green-600"
-      case "down":
-        return "text-red-600"
-      default:
-        return "text-gray-600"
-    }
-  }
-
-  const filteredData = marketData.filter(item =>
-    item.name.toLowerCase().includes(query.toLowerCase()) ||
-    item.nameHi.includes(query)
-  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100">
@@ -119,7 +75,7 @@ export default function MarketPage() {
           </Link>
           <div>
             <h1 className="text-lg font-bold">💰 Market Prices</h1>
-            <p className="text-green-100 text-sm">Real-time crop prices</p>
+            <p className="text-green-100 text-sm">Real-time (Agmarknet)</p>
           </div>
         </div>
       </div>
@@ -131,12 +87,20 @@ export default function MarketPage() {
             <div className="flex gap-2">
               <div className="flex-1 relative">
                 <Input
-                  placeholder="Search crop prices... (e.g., Tomato)"
+                  placeholder="Search crop (e.g., Wheat, Mustard)..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                   className="pr-10"
                 />
-                <Search className="w-4 h-4 absolute right-3 top-3 text-gray-400" />
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="absolute right-0 top-0 h-full text-gray-400 hover:text-green-600"
+                  onClick={handleSearch}
+                >
+                  <Search className="w-4 h-4" />
+                </Button>
               </div>
             </div>
 
@@ -149,125 +113,73 @@ export default function MarketPage() {
                 {isListening ? (
                   <>
                     <div className="w-4 h-4 bg-white rounded-full animate-pulse mr-2"></div>
-                    Listening... (Hindi/English)
+                    Listening...
                   </>
                 ) : (
-                  <>🎤 Ask Market Price</>
+                  <>🎤 Voice Search</>
                 )}
               </Button>
             </div>
-
-            {query && (
-              <div className="text-sm text-gray-600 bg-green-50 p-2 rounded">
-                <strong>Query:</strong> "{query}"
-              </div>
-            )}
           </CardContent>
         </Card>
 
         {/* Market Summary */}
-        <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
-          <CardHeader>
-            <CardTitle className="text-amber-700 text-sm flex items-center gap-2">📊 Today's Market Summary</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-lg font-bold text-green-600">12</div>
-              <div className="text-xs text-gray-600">Prices Up</div>
-            </div>
-            <div>
-              <div className="text-lg font-bold text-red-600">5</div>
-              <div className="text-xs text-gray-600">Prices Down</div>
-            </div>
-            <div>
-              <div className="text-lg font-bold text-gray-600">8</div>
-              <div className="text-xs text-gray-600">Stable</div>
-            </div>
-          </CardContent>
-        </Card>
+        {marketSummary && !loading && (
+          <Card className="bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200">
+            <CardHeader>
+              <CardTitle className="text-amber-700 text-sm flex items-center gap-2">📊 Market Insight</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-800">{marketSummary}</p>
+            </CardContent>
+          </Card>
+        )}
 
-        {/* Price List */}
+        {/* Loading / Error / Data */}
         <div className="space-y-3">
           <h3 className="font-semibold text-green-700 flex items-center gap-2">
-            📈 Current Prices
-            <Badge variant="secondary" className="text-xs">
-              Live
-            </Badge>
+            📈 Live Prices (Rajasthan)
+            {loading && <Loader2 className="w-4 h-4 animate-spin" />}
           </h3>
 
-          {filteredData.map((crop, index) => (
+          {error && (
+            <div className="p-3 bg-red-100 text-red-700 text-sm rounded-lg border border-red-200">
+              {error}
+            </div>
+          )}
+
+          {!loading && !error && marketData.length === 0 && (
+            <p className="text-sm text-gray-500 italic">No price data found. Try searching for "Rice", "Bajra", or "Wheat".</p>
+          )}
+
+          {!loading && marketData.map((price, index) => (
             <Card
               key={index}
-              className={`border-green-200 hover:shadow-md transition-shadow cursor-pointer ${selectedCrop === crop.name ? "ring-2 ring-green-500 bg-green-50" : ""
+              className={`border-green-200 hover:shadow-md transition-shadow cursor-pointer ${selectedCrop === price.district ? "ring-2 ring-green-500 bg-green-50" : ""
                 }`}
-              onClick={() => setSelectedCrop(selectedCrop === crop.name ? null : crop.name)}
+              onClick={() => setSelectedCrop(selectedCrop === price.district ? null : price.district)}
             >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-semibold text-gray-800">{crop.name}</h4>
-                      <span className="text-sm text-gray-500">({crop.nameHi})</span>
+                      <h4 className="font-semibold text-gray-800">{price.district}</h4>
                     </div>
-                    <div className="text-xs text-gray-500">{crop.market}</div>
+                    <div className="text-xs text-gray-500">{price.market_name}</div>
+                    <div className="text-xs text-gray-400 mt-1">{price.arrival_date}</div>
                   </div>
 
                   <div className="text-right">
                     <div className="text-lg font-bold text-gray-800">
-                      ₹{crop.price}
-                      <span className="text-sm font-normal text-gray-500">/{crop.unit}</span>
-                    </div>
-                    <div className={`flex items-center gap-1 text-sm ${getTrendColor(crop.trend)}`}>
-                      {getTrendIcon(crop.trend)}
-                      <span>
-                        {crop.change > 0 ? "+" : ""}
-                        {crop.change}
-                        {crop.unit === "quintal" ? "" : "%"}
-                      </span>
+                      ₹{price.modal_price}
+                      <span className="text-sm font-normal text-gray-500">/qtl</span>
                     </div>
                   </div>
                 </div>
-
-                {selectedCrop === crop.name && (
-                  <div className="mt-3 pt-3 border-t border-green-200 space-y-2">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <div className="text-gray-500">Yesterday</div>
-                        <div className="font-semibold">₹{crop.price - crop.change}</div>
-                      </div>
-                      <div>
-                        <div className="text-gray-500">This Week</div>
-                        <div className="font-semibold text-green-600">+5.2%</div>
-                      </div>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="w-full text-green-700 border-green-300 bg-transparent"
-                    >
-                      📊 View Price History
-                    </Button>
-                  </div>
-                )}
               </CardContent>
             </Card>
           ))}
         </div>
-
-        {/* Quick Actions */}
-        <Card className="border-green-200">
-          <CardHeader>
-            <CardTitle className="text-green-700 text-sm">⚡ Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-3">
-            <Button variant="outline" className="border-green-300 text-green-700 text-sm bg-transparent">
-              📱 Price Alerts
-            </Button>
-            <Button variant="outline" className="border-green-300 text-green-700 text-sm bg-transparent">
-              📍 Nearby Markets
-            </Button>
-          </CardContent>
-        </Card>
       </div>
     </div>
   )

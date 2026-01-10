@@ -8,84 +8,25 @@ import { Badge } from "@/components/ui/badge"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import Link from "next/link"
 import { ArrowLeft, Search, ChevronDown, ExternalLink, CheckCircle } from "lucide-react"
+import schemesData from "@/lib/data/schemes.json"
 
 export default function SchemesPage() {
   const [isListening, setIsListening] = useState(false)
   const [query, setQuery] = useState("")
   const [openSchemes, setOpenSchemes] = useState<string[]>([])
+  const [userState, setUserState] = useState("Rajasthan") // Default state
 
-  const schemes = [
-    {
-      id: "pm-kisan",
-      title: "PM-KISAN Samman Nidhi",
-      titleHi: "पीएम-किसान सम्मान निधि",
-      benefit: "₹6,000 per year",
-      category: "Direct Benefit Transfer",
-      eligibility: "Small & marginal farmers with landholding up to 2 hectares",
-      description:
-        "Direct income support to farmer families across the country to supplement their financial needs for procuring various inputs.",
-      documents: ["Aadhaar Card", "Bank Account Details", "Land Records"],
-      applicationLink: "https://pmkisan.gov.in",
-      status: "Active",
-    },
-    {
-      id: "drip-irrigation",
-      title: "Drip Irrigation Subsidy",
-      titleHi: "टपक सिंचाई सब्सिडी",
-      benefit: "Up to 55% subsidy",
-      category: "Water Conservation",
-      eligibility: "All categories of farmers",
-      description:
-        "Financial assistance for adoption of water efficient irrigation systems like drip and sprinkler irrigation.",
-      documents: ["Land Records", "Bank Account", "Quotation from Supplier"],
-      applicationLink: "https://pmksy.gov.in",
-      status: "Active",
-    },
-    {
-      id: "crop-insurance",
-      title: "Pradhan Mantri Fasal Bima Yojana",
-      titleHi: "प्रधानमंत्री फसल बीमा योजना",
-      benefit: "Crop loss compensation",
-      category: "Insurance",
-      eligibility: "All farmers growing notified crops",
-      description: "Comprehensive risk solution for crop loss due to natural calamities, pests & diseases.",
-      documents: ["Aadhaar Card", "Bank Account", "Land Records", "Sowing Certificate"],
-      applicationLink: "https://pmfby.gov.in",
-      status: "Active",
-    },
-    {
-      id: "soil-health",
-      title: "Soil Health Card Scheme",
-      titleHi: "मृदा स्वास्थ्य कार्ड योजना",
-      benefit: "Free soil testing",
-      category: "Soil Management",
-      eligibility: "All farmers",
-      description:
-        "Provides soil nutrient status and recommendations on appropriate dosage of nutrients for improving soil health.",
-      documents: ["Land Records", "Farmer ID"],
-      applicationLink: "https://soilhealth.dac.gov.in",
-      status: "Active",
-    },
-    {
-      id: "kcc",
-      title: "Kisan Credit Card (KCC)",
-      titleHi: "किसान क्रेडिट कार्ड (KCC)",
-      benefit: "Low interest loans",
-      category: "Credit",
-      eligibility: "Farmers, Tenant Farmers, Share Croppers",
-      description:
-        "Adequate and timely credit support from the banking system under a single window with flexible and simplified procedure.",
-      documents: ["Aadhaar Card", "Land Records", "Passport Photo"],
-      applicationLink: "https://www.myscheme.gov.in/schemes/kcc",
-      status: "Active",
-    },
-  ]
+  // Combine Schemes from JSON
+  const nationalSchemes = schemesData.national_schemes.map((s, i) => ({ ...s, id: `nat-${i}`, type: 'National' }))
+  const stateSchemes = (schemesData.state_specific_schemes as any)[userState]?.map((s: any, i: number) => ({ ...s, id: `state-${i}`, type: 'State' })) || []
+
+  const allSchemes = [...nationalSchemes, ...stateSchemes]
 
   const handleVoiceSearch = () => {
     setIsListening(true)
     setTimeout(() => {
       setIsListening(false)
-      setQuery("Subsidy for drip irrigation")
+      setQuery("Insurance")
     }, 2000)
   }
 
@@ -93,11 +34,11 @@ export default function SchemesPage() {
     setOpenSchemes((prev) => (prev.includes(schemeId) ? prev.filter((id) => id !== schemeId) : [...prev, schemeId]))
   }
 
-  const filteredSchemes = schemes.filter(
+  const filteredSchemes = allSchemes.filter(
     (scheme) =>
-      scheme.title.toLowerCase().includes(query.toLowerCase()) ||
-      scheme.category.toLowerCase().includes(query.toLowerCase()) ||
-      scheme.description.toLowerCase().includes(query.toLowerCase()),
+      scheme.name.toLowerCase().includes(query.toLowerCase()) ||
+      scheme.description.toLowerCase().includes(query.toLowerCase()) ||
+      (scheme.category && scheme.category.toLowerCase().includes(query.toLowerCase()))
   )
 
   return (
@@ -124,7 +65,7 @@ export default function SchemesPage() {
             <div className="flex gap-2">
               <div className="flex-1 relative">
                 <Input
-                  placeholder="Search schemes... (e.g., drip irrigation)"
+                  placeholder="Search schemes... (e.g., Insurance)"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   className="pr-10"
@@ -141,18 +82,12 @@ export default function SchemesPage() {
               {isListening ? (
                 <>
                   <div className="w-4 h-4 bg-white rounded-full animate-pulse mr-2"></div>
-                  Listening... (Hindi/English)
+                  Listening...
                 </>
               ) : (
                 <>🎤 Ask About Schemes</>
               )}
             </Button>
-
-            {query && (
-              <div className="text-sm text-gray-600 bg-green-50 p-2 rounded">
-                <strong>Searching for:</strong> "{query}"
-              </div>
-            )}
           </CardContent>
         </Card>
 
@@ -162,7 +97,7 @@ export default function SchemesPage() {
             <CardTitle className="text-green-700 text-sm">🏷️ Popular Categories</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
-            {["Subsidies", "Insurance", "Loans", "Water", "Seeds", "Equipment"].map((category) => (
+            {["Insurance", "Loans", "Income Support", "Seed Production"].map((category) => (
               <Badge
                 key={category}
                 variant="outline"
@@ -178,7 +113,7 @@ export default function SchemesPage() {
         {/* Schemes List */}
         <div className="space-y-3">
           <h3 className="font-semibold text-green-700 flex items-center gap-2">
-            📋 Available Schemes
+            📋 Available Schemes ({userState})
             <Badge variant="secondary" className="text-xs">
               {filteredSchemes.length} found
             </Badge>
@@ -191,15 +126,16 @@ export default function SchemesPage() {
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between w-full">
                       <div className="text-left">
-                        <CardTitle className="text-sm font-semibold text-gray-800 mb-1">{scheme.title}</CardTitle>
-                        <div className="text-xs text-gray-500 mb-2">{scheme.titleHi}</div>
+                        <CardTitle className="text-sm font-semibold text-gray-800 mb-1">{scheme.name}</CardTitle>
                         <div className="flex items-center gap-2">
                           <Badge variant="secondary" className="text-xs">
-                            {scheme.category}
+                            {scheme.type}
                           </Badge>
-                          <Badge variant="outline" className="text-xs text-green-700">
-                            {scheme.benefit}
-                          </Badge>
+                          {scheme.benefit && (
+                            <Badge variant="outline" className="text-xs text-green-700">
+                              {scheme.benefit}
+                            </Badge>
+                          )}
                         </div>
                       </div>
                       <ChevronDown
@@ -217,16 +153,10 @@ export default function SchemesPage() {
                     <div className="space-y-3">
                       <div>
                         <h4 className="font-semibold text-sm text-gray-800 mb-2">✅ Eligibility</h4>
-                        <p className="text-sm text-gray-600">{scheme.eligibility}</p>
-                      </div>
-
-                      <div>
-                        <h4 className="font-semibold text-sm text-gray-800 mb-2">📄 Required Documents</h4>
-                        <div className="space-y-1">
-                          {scheme.documents.map((doc, index) => (
-                            <div key={index} className="flex items-center gap-2 text-sm text-gray-600">
-                              <CheckCircle className="w-3 h-3 text-green-500" />
-                              <span>{doc}</span>
+                        <div className="text-sm text-gray-600">
+                          {Object.entries(scheme.eligibility_criteria || {}).map(([key, value]) => (
+                            <div key={key} className="capitalize">
+                              • {key.replace(/_/g, ' ')}: {value.toString()}
                             </div>
                           ))}
                         </div>
@@ -237,7 +167,7 @@ export default function SchemesPage() {
                       <Button
                         size="sm"
                         className="flex-1 bg-green-600 hover:bg-green-700"
-                        onClick={() => window.open(scheme.applicationLink, "_blank")}
+                        onClick={() => window.open(scheme.link, "_blank")}
                       >
                         <ExternalLink className="w-4 h-4 mr-1" />
                         Apply Online
@@ -252,17 +182,6 @@ export default function SchemesPage() {
             </Card>
           ))}
         </div>
-
-        {/* Help Section */}
-        <Card className="bg-blue-50 border-blue-200">
-          <CardContent className="p-4 text-center">
-            <h4 className="font-semibold text-blue-700 mb-2">Need Help with Applications?</h4>
-            <p className="text-sm text-blue-600 mb-3">Our experts can guide you through the application process</p>
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-              📞 Call Support: 1800-180-1551 (Kisan Call Center)
-            </Button>
-          </CardContent>
-        </Card>
       </div>
     </div>
   )
