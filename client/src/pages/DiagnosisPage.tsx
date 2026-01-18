@@ -20,6 +20,12 @@ export default function DiagnosisPage() {
     const [result, setResult] = useState<DiagnosisResult | null>(null)
     const [error, setError] = useState<string | null>(null)
 
+    // Helper to get sanitized URL
+    const getApiUrl = () => {
+        const raw = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        return raw.replace(/\/$/, '');
+    }
+
     const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (file) {
@@ -39,8 +45,9 @@ export default function DiagnosisPage() {
         formData.append("image", file)
 
         try {
+            const API_URL = getApiUrl();
             // Connect to the Express Server (Proxy)
-            const response = await fetch("http://localhost:5000/api/diagnose", {
+            const response = await fetch(`${API_URL}/api/diagnose`, {
                 method: "POST",
                 body: formData,
             })

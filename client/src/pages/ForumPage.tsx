@@ -35,7 +35,8 @@ export default function ForumPage() {
     // Fetch posts from backend
     const fetchPosts = async () => {
         try {
-            const res = await fetch("http://localhost:5000/api/forum");
+            const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
+            const res = await fetch(`${API_URL}/api/forum`);
             const data = await res.json();
             setPosts(data);
         } catch (error) {
@@ -49,7 +50,8 @@ export default function ForumPage() {
 
     const handleLike = async (id: string) => {
         try {
-            await fetch(`http://localhost:5000/api/forum/${id}/like`, { method: "POST" });
+            const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
+            await fetch(`${API_URL}/api/forum/${id}/like`, { method: "POST" });
             fetchPosts(); // Refresh
         } catch (error) {
             console.error("Failed to like post:", error);
@@ -60,7 +62,8 @@ export default function ForumPage() {
         if (!newPostTitle.trim() || !newPostContent.trim()) return;
 
         try {
-            await fetch("http://localhost:5000/api/forum", {
+            const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
+            await fetch(`${API_URL}/api/forum`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
