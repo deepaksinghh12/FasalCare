@@ -24,7 +24,7 @@ const text = {
     online: "Online",
   },
   gu: {
-    title: "એગ્રી-મિત્ર",
+    title: "ફસલ કેર",
     subtitle: "તમારો AI ખેડૂત મિત્ર",
     cropDiagnosis: "પાક રોગ નિદાન",
     cropDesc: "છોડના રોગો ઓળખવા માટે ફોટો લો",
@@ -241,7 +241,7 @@ import VoicePage from "./pages/VoicePage";
 export default function App() {
   return (
     <Router>
-      <div className="min-h-screen pb-8 relative">
+      <div className="min-h-screen pb-4 relative">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/settings" element={<SettingsPage />} />
@@ -254,7 +254,7 @@ export default function App() {
         </Routes>
 
         {/* Global Footer */}
-        <div className="text-center p-4 text-xs text-green-600 opacity-60 mt-8 font-medium">
+        <div className="text-center p-2 text-[10px] text-green-600 opacity-60 mt-4 font-medium">
           Developed by DeepPro ❤️
         </div>
       </div>
