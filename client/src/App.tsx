@@ -255,7 +255,7 @@ export default function App() {
 
         {/* Global Footer */}
         <div className="text-center p-2 text-[10px] text-green-600 opacity-60 mt-4 font-medium">
-          Developed by DeepPro ❤️
+          Developed by DeepPro
         </div>
       </div>
     </Router>
