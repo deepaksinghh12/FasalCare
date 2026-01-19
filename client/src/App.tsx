@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Mic, TrendingUp, Settings, Wifi, WifiOff } from "lucide-react"
 
 // Types
-type Language = "en" | "gu";
+type Language = "en" | "gu" | "hi";
 
 const text = {
   en: {
@@ -37,11 +37,39 @@ const text = {
     offline: "ઓફલાઇન મોડ",
     online: "ઓનલાઇન",
   },
+  hi: {
+    title: "फसल केयर",
+    subtitle: "आपका एआई खेती सहायक",
+    cropDiagnosis: "फसल रोग निदान",
+    cropDesc: "पौधों के रोगों की पहचान के लिए फोटो लें",
+    marketPrices: "बाजार भाव देखें",
+    marketDesc: "फसलों के रियल-टाइम भाव प्राप्त करें",
+    govSchemes: "सरकारी योजनाएं",
+    schemesDesc: "सब्सिडी और लाभ खोजें",
+    voiceAssistant: "वॉयस असिस्टेंट",
+    voiceDesc: "खेती के बारे में कुछ भी पूछें",
+    offline: "ऑफलाइन मोड",
+    online: "ऑनलाइन",
+  }
 }
 
 function HomePage() {
   const [isOnline] = useState(true) // Helper to detect online status could be added
   const [language, setLanguage] = useState<Language>("en")
+
+  const toggleLanguage = () => {
+    setLanguage(prev => {
+      if (prev === "en") return "hi";
+      if (prev === "hi") return "gu";
+      return "en";
+    })
+  }
+
+  const getLangLabel = () => {
+    if (language === "en") return "हिंदी";
+    if (language === "hi") return "ગુજરાતી";
+    return "English";
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100">
@@ -60,10 +88,10 @@ function HomePage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setLanguage(prev => prev === "en" ? "gu" : "en")}
+              onClick={toggleLanguage}
               className="text-white hover:bg-green-700 font-bold border border-white/20"
             >
-              {language === "en" ? "ગુજરાતી" : "English"}
+              {getLangLabel()}
             </Button>
             <Link to="/settings">
               <Button variant="ghost" size="icon" className="text-white hover:bg-green-700">
@@ -88,7 +116,7 @@ function HomePage() {
             </div>
             <Link to="/voice">
               <Button className="bg-white text-green-600 hover:bg-green-50 font-semibold px-8 py-3 rounded-full">
-                🎤 {language === "en" ? "Start Voice Chat" : "વાતચીત શરૂ કરો"}
+                🎤 {language === "en" ? "Start Voice Chat" : (language === "hi" ? "बातचीत शुरू करें" : "વાતચીત શરૂ કરો")}
               </Button>
             </Link>
           </CardContent>
@@ -148,8 +176,8 @@ function HomePage() {
                 <CardTitle className="flex items-center gap-3 text-green-700">
                   <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">🌦️</div>
                   <div>
-                    <div className="font-semibold">{language === "en" ? "Live Weather" : "मौसम का हाल"}</div>
-                    <div className="text-sm text-gray-600 font-normal">{language === "en" ? "Check forecasts" : "पूर्वानुमान देखें"}</div>
+                    <div className="font-semibold">{language === "en" ? "Live Weather" : (language === "hi" ? "मौसम अपडेट" : "હવામાન")}</div>
+                    <div className="text-sm text-gray-600 font-normal">{language === "en" ? "Check forecasts" : (language === "hi" ? "पूर्वानुमान देखें" : "આગાહી તપાસો")}</div>
                   </div>
                 </CardTitle>
               </CardHeader>
@@ -165,8 +193,8 @@ function HomePage() {
                 <CardTitle className="flex items-center gap-3 text-green-700">
                   <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">👥</div>
                   <div>
-                    <div className="font-semibold">{language === "en" ? "Farmer Forum" : "ખેડૂત ચર્ચા"}</div>
-                    <div className="text-sm text-gray-600 font-normal">{language === "en" ? "Ask & Share tips" : "પ્રશ્નો પૂછો અને ટીપ્સ શેર કરો"}</div>
+                    <div className="font-semibold">{language === "en" ? "Farmer Forum" : (language === "hi" ? "किसान मंच" : "ખેડૂત ચર્ચા")}</div>
+                    <div className="text-sm text-gray-600 font-normal">{language === "en" ? "Ask & Share tips" : (language === "hi" ? "सवाल और सुझाव साझा करें" : "પ્રશ્નો પૂછો અને ટીપ્સ શેર કરો")}</div>
                   </div>
                 </CardTitle>
               </CardHeader>
@@ -179,18 +207,18 @@ function HomePage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between text-sm">
               <div className="text-center">
-                <div className="font-semibold text-amber-700">🌾 Today</div>
-                <div className="text-amber-600">3 Queries</div>
+                <div className="font-semibold text-amber-700">🌾 {language === "en" ? "Today" : (language === "hi" ? "आज" : "આજે")}</div>
+                <div className="text-amber-600">3 {language === "en" ? "Queries" : (language === "hi" ? "प्रश्न" : "પ્રશ્નો")}</div>
               </div>
               <div className="text-center">
-                <div className="font-semibold text-amber-700">📈 Trend</div>
+                <div className="font-semibold text-amber-700">📈 {language === "en" ? "Trend" : "ट्रेंड"}</div>
                 <div className="text-amber-600 flex items-center gap-1">
                   <TrendingUp className="w-3 h-3" />
                   +12%
                 </div>
               </div>
               <div className="text-center">
-                <div className="font-semibold text-amber-700">🎯 Accuracy</div>
+                <div className="font-semibold text-amber-700">🎯 {language === "en" ? "Accuracy" : (language === "hi" ? "सटीकता" : "ચોકસાઈ")}</div>
                 <div className="text-amber-600">94%</div>
               </div>
             </div>
@@ -213,16 +241,23 @@ import VoicePage from "./pages/VoicePage";
 export default function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/voice" element={<VoicePage />} />
-        <Route path="/market" element={<MarketPage />} />
-        <Route path="/schemes" element={<SchemesPage />} />
-        <Route path="/weather" element={<WeatherPage />} />
-        <Route path="/diagnosis" element={<DiagnosisPage />} />
-        <Route path="/forum" element={<ForumPage />} />
-      </Routes>
+      <div className="min-h-screen pb-8 relative">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/voice" element={<VoicePage />} />
+          <Route path="/market" element={<MarketPage />} />
+          <Route path="/schemes" element={<SchemesPage />} />
+          <Route path="/weather" element={<WeatherPage />} />
+          <Route path="/diagnosis" element={<DiagnosisPage />} />
+          <Route path="/forum" element={<ForumPage />} />
+        </Routes>
+
+        {/* Global Footer */}
+        <div className="text-center p-4 text-xs text-green-600 opacity-60 mt-8 font-medium">
+          Developed by DeepPro ❤️
+        </div>
+      </div>
     </Router>
   )
 }
