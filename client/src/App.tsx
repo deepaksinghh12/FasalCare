@@ -74,17 +74,21 @@ function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100">
       {/* Header */}
-      <div className="bg-green-600 text-white p-4 shadow-lg">
+      <div className="bg-green-600 text-white p-4 shadow-lg sticky top-0 z-50">
         <div className="flex items-center justify-between max-w-md mx-auto">
           <div>
             <h1 className="text-xl font-bold">🧑‍🌾 {text[language].title}</h1>
             <p className="text-green-100 text-sm">{text[language].subtitle}</p>
           </div>
           <div className="flex items-center gap-2">
-            <Badge variant={isOnline ? "default" : "destructive"} className="text-xs">
-              {isOnline ? <Wifi className="w-3 h-3 mr-1" /> : <WifiOff className="w-3 h-3 mr-1" />}
-              {isOnline ? text[language].online : text[language].offline}
-            </Badge>
+            {/* Subscription Icon (Replacing Wifi) */}
+            <Button variant="ghost" size="icon" className="text-yellow-300 hover:text-yellow-100 hover:bg-white/10">
+              <div className="relative">
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping" />
+                <span className="text-xl">👑</span>
+              </div>
+            </Button>
+
             <Button
               variant="ghost"
               size="sm"
@@ -103,139 +107,133 @@ function HomePage() {
       </div>
 
       {/* Main Content */}
-      <div className="p-4 max-w-md mx-auto space-y-4">
-        {/* Voice Assistant - Central Feature */}
-        <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0 shadow-lg">
-          <CardContent className="p-6 text-center">
+      <div className="p-4 max-w-md mx-auto space-y-4 pb-20">
+        {/* HERO: Crop Diagnosis (Replaces Voice) */}
+        <Card className="bg-gradient-to-r from-green-600 to-emerald-700 text-white border-0 shadow-lg overflow-hidden relative">
+          {/* Decorative Background Pattern */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-yellow-400/20 rounded-full -ml-12 -mb-12 blur-xl" />
+
+          <CardContent className="p-6 text-center relative z-10">
             <div className="mb-4">
-              <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3 animate-pulse">
-                <Mic className="w-10 h-10" />
+              <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3 shadow-inner border border-white/30 backdrop-blur-sm">
+                <span className="text-4xl">📷</span>
               </div>
-              <h2 className="text-lg font-semibold mb-2">{text[language].voiceAssistant}</h2>
-              <p className="text-green-100 text-sm mb-4">{text[language].voiceDesc}</p>
+              <h2 className="text-xl font-bold mb-1">{text[language].cropDiagnosis}</h2>
+              <p className="text-green-100 text-sm mb-4 opacity-90">{text[language].cropDesc}</p>
             </div>
-            <Link to="/voice">
-              <Button className="bg-white text-green-600 hover:bg-green-50 font-semibold px-8 py-3 rounded-full">
-                🎤 {language === "en" ? "Start Voice Chat" : (language === "hi" ? "बातचीत शुरू करें" : "વાતચીત શરૂ કરો")}
+            <Link to="/diagnosis">
+              <Button className="bg-white text-green-700 hover:bg-green-50 font-bold px-8 py-6 rounded-full shadow-lg hover:scale-105 transition-transform w-full text-md">
+                {language === "en" ? "Scan Now" : (language === "hi" ? "अभी स्कैन करें" : "હવે સ્કેન કરો")} 📸
               </Button>
             </Link>
           </CardContent>
         </Card>
 
-        {/* Feature Cards */}
-        <div className="grid gap-4">
-          {/* Crop Diagnosis */}
-          <Link to="/diagnosis" className="block">
-            <Card className="hover:shadow-lg transition-shadow border-green-200 hover:border-green-300">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-3 text-green-700">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">📷</div>
-                  <div>
-                    <div className="font-semibold">{text[language].cropDiagnosis}</div>
-                    <div className="text-sm text-gray-600 font-normal">{text[language].cropDesc}</div>
-                  </div>
-                </CardTitle>
-              </CardHeader>
-            </Card>
-          </Link>
-
+        {/* Feature Cards Grid */}
+        <div className="grid grid-cols-2 gap-3">
           {/* Market Prices */}
-          <Link to="/market" className="block">
-            <Card className="hover:shadow-lg transition-shadow border-green-200 hover:border-green-300">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-3 text-green-700">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">💰</div>
+          <Link to="/market" className="block col-span-1">
+            <Card className="hover:shadow-lg transition-shadow border-green-200 hover:border-green-300 h-full">
+              <CardHeader className="p-4">
+                <CardTitle className="flex flex-col items-center text-center gap-2 text-green-700">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-xl">💰</div>
                   <div>
-                    <div className="font-semibold">{text[language].marketPrices}</div>
-                    <div className="text-sm text-gray-600 font-normal">{text[language].marketDesc}</div>
+                    <div className="font-semibold text-sm">{text[language].marketPrices}</div>
                   </div>
                 </CardTitle>
               </CardHeader>
             </Card>
           </Link>
 
-          {/* Government Schemes */}
-          <Link to="/schemes" className="block">
-            <Card className="hover:shadow-lg transition-shadow border-green-200 hover:border-green-300">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-3 text-green-700">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">🧾</div>
+          {/* Weather */}
+          <Link to="/weather" className="block col-span-1">
+            <Card className="hover:shadow-lg transition-shadow border-green-200 hover:border-green-300 h-full">
+              <CardHeader className="p-4">
+                <CardTitle className="flex flex-col items-center text-center gap-2 text-green-700">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-xl">🌦️</div>
                   <div>
-                    <div className="font-semibold">{text[language].govSchemes}</div>
-                    <div className="text-sm text-gray-600 font-normal">{text[language].schemesDesc}</div>
+                    <div className="font-semibold text-sm">{language === "en" ? "Weather" : (language === "hi" ? "मौसम" : "હવામાન")}</div>
                   </div>
                 </CardTitle>
               </CardHeader>
             </Card>
           </Link>
 
-          {/* Weather Dashboard */}
-          <Link to="/weather" className="block">
-            <Card className="hover:shadow-lg transition-shadow border-green-200 hover:border-green-300">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-3 text-green-700">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">🌦️</div>
+          {/* Schemes */}
+          <Link to="/schemes" className="block col-span-1">
+            <Card className="hover:shadow-lg transition-shadow border-green-200 hover:border-green-300 h-full">
+              <CardHeader className="p-4">
+                <CardTitle className="flex flex-col items-center text-center gap-2 text-green-700">
+                  <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-xl">🧾</div>
                   <div>
-                    <div className="font-semibold">{language === "en" ? "Live Weather" : (language === "hi" ? "मौसम अपडेट" : "હવામાન")}</div>
-                    <div className="text-sm text-gray-600 font-normal">{language === "en" ? "Check forecasts" : (language === "hi" ? "पूर्वानुमान देखें" : "આગાહી તપાસો")}</div>
+                    <div className="font-semibold text-sm">{language === "en" ? "Schemes" : (language === "hi" ? "योजनाएं" : "યોજનાઓ")}</div>
                   </div>
                 </CardTitle>
               </CardHeader>
             </Card>
           </Link>
 
-
-
-          {/* Community Forum */}
-          <Link to="/forum" className="block">
-            <Card className="hover:shadow-lg transition-shadow border-green-200 hover:border-green-300">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-3 text-green-700">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">👥</div>
+          {/* Forum */}
+          <Link to="/forum" className="block col-span-1">
+            <Card className="hover:shadow-lg transition-shadow border-green-200 hover:border-green-300 h-full">
+              <CardHeader className="p-4">
+                <CardTitle className="flex flex-col items-center text-center gap-2 text-green-700">
+                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-xl">👥</div>
                   <div>
-                    <div className="font-semibold">{language === "en" ? "Farmer Forum" : (language === "hi" ? "किसान मंच" : "ખેડૂત ચર્ચા")}</div>
-                    <div className="text-sm text-gray-600 font-normal">{language === "en" ? "Ask & Share tips" : (language === "hi" ? "सवाल और सुझाव साझा करें" : "પ્રશ્નો પૂછો અને ટીપ્સ શેર કરો")}</div>
+                    <div className="font-semibold text-sm">{language === "en" ? "Forum" : (language === "hi" ? "मंच" : "ચર્ચા")}</div>
                   </div>
                 </CardTitle>
               </CardHeader>
             </Card>
           </Link>
+        </div>
 
+        {/* Teasers List */}
+        <div className="space-y-3">
           {/* Drone Farming (Teaser) */}
-          <div className="block opacity-75 grayscale hover:grayscale-0 transition-all">
-            <Card className="border-blue-200 hover:border-blue-300 bg-blue-50/50">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-3 text-blue-800">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">🚁</div>
-                  <div>
-                    <div className="font-semibold flex items-center gap-2">
-                       {language === "en" ? "Drone Spraying" : (language === "hi" ? "ड्रोन छिड़काव" : "ડ્રોન છંટકાવ")}
-                       <Badge variant="secondary" className="text-[10px] bg-blue-200 text-blue-800 hover:bg-blue-200">
-                         {language === "en" ? "SOON" : (language === "hi" ? "जल्द" : "ટૂંક સમયમાં")}
-                       </Badge>
-                    </div>
-                    <div className="text-sm text-gray-600 font-normal">{language === "en" ? "Automated pesticide spray" : (language === "hi" ? "स्वचालित कीटनाशक छिड़काव" : "સ્વચાલિત જંતુનાશક છંટકાવ")}</div>
+          <div className="block opacity-80 grayscale hover:grayscale-0 transition-all">
+            <Card className="border-blue-200 bg-blue-50/50">
+              <div className="p-3 flex items-center gap-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-2xl">🚁</div>
+                <div>
+                  <div className="font-semibold flex items-center gap-2 text-blue-900">
+                    {language === "en" ? "Drone Services" : (language === "hi" ? "ड्रोन सेवाएं" : "ડ્રોન સેવા")}
+                    <Badge variant="secondary" className="text-[10px] bg-blue-200 text-blue-800">SOON</Badge>
                   </div>
-                </CardTitle>
-              </CardHeader>
+                  <div className="text-xs text-blue-700">Automated Spraying & Monitoring</div>
+                </div>
+              </div>
             </Card>
           </div>
 
           {/* Subscription (Teaser) */}
           <div className="block">
-            <Card className="border-purple-200 hover:shadow-lg transition-all bg-gradient-to-r from-purple-50 to-pink-50 cursor-pointer">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-3 text-purple-800">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">👑</div>
-                  <div>
-                    <div className="font-semibold">{language === "en" ? "FasalCare Pro" : (language === "hi" ? "फसल केयर प्रो" : "ફસલ કેર પ્રો")}</div>
-                    <div className="text-sm text-gray-600 font-normal">{language === "en" ? "Get Premium Features" : (language === "hi" ? "प्रीमियम फीचर्स पाएं" : "પ્રીમિયમ સુવિધાઓ મેળવો")}</div>
-                  </div>
-                </CardTitle>
-              </CardHeader>
+            <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
+              <div className="p-3 flex items-center gap-4">
+                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center text-2xl">👑</div>
+                <div>
+                  <div className="font-semibold text-purple-900">{language === "en" ? "Upgrade to Pro" : (language === "hi" ? "प्रो में अपग्रेड करें" : "પ્રો પર અપગ્રેડ કરો")}</div>
+                  <div className="text-xs text-purple-700">Get Ad-free experience & Expert support</div>
+                </div>
+              </div>
             </Card>
           </div>
         </div>
+
+
+        {/* Floating Voice Assistant Button (FAB) */}
+        <Link to="/voice">
+          <div className="fixed bottom-6 right-6 z-50 animate-bounce-slow">
+            <Button className="w-16 h-16 rounded-full bg-gradient-to-r from-green-600 to-emerald-600 shadow-xl shadow-green-300 border-4 border-white flex items-center justify-center hover:scale-110 transition-transform">
+              <Mic className="w-8 h-8 text-white" />
+            </Button>
+            {/* Tooltip/Label */}
+            <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[10px] px-2 py-1 rounded-md whitespace-nowrap opacity-0 hover:opacity-100 transition-opacity">
+              Voice Assistant
+            </div>
+          </div>
+        </Link>
 
         {/* Quick Stats */}
         <Card className="bg-amber-50 border-amber-200">
@@ -259,6 +257,7 @@ function HomePage() {
             </div>
           </CardContent>
         </Card>
+
       </div>
     </div>
   )
