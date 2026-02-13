@@ -200,6 +200,41 @@ function HomePage() {
               </CardHeader>
             </Card>
           </Link>
+
+          {/* Drone Farming (Teaser) */}
+          <div className="block opacity-75 grayscale hover:grayscale-0 transition-all">
+            <Card className="border-blue-200 hover:border-blue-300 bg-blue-50/50">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-3 text-blue-800">
+                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">🚁</div>
+                  <div>
+                    <div className="font-semibold flex items-center gap-2">
+                       {language === "en" ? "Drone Spraying" : (language === "hi" ? "ड्रोन छिड़काव" : "ડ્રોન છંટકાવ")}
+                       <Badge variant="secondary" className="text-[10px] bg-blue-200 text-blue-800 hover:bg-blue-200">
+                         {language === "en" ? "SOON" : (language === "hi" ? "जल्द" : "ટૂંક સમયમાં")}
+                       </Badge>
+                    </div>
+                    <div className="text-sm text-gray-600 font-normal">{language === "en" ? "Automated pesticide spray" : (language === "hi" ? "स्वचालित कीटनाशक छिड़काव" : "સ્વચાલિત જંતુનાશક છંટકાવ")}</div>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+            </Card>
+          </div>
+
+          {/* Subscription (Teaser) */}
+          <div className="block">
+            <Card className="border-purple-200 hover:shadow-lg transition-all bg-gradient-to-r from-purple-50 to-pink-50 cursor-pointer">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-3 text-purple-800">
+                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">👑</div>
+                  <div>
+                    <div className="font-semibold">{language === "en" ? "FasalCare Pro" : (language === "hi" ? "फसल केयर प्रो" : "ફસલ કેર પ્રો")}</div>
+                    <div className="text-sm text-gray-600 font-normal">{language === "en" ? "Get Premium Features" : (language === "hi" ? "प्रीमियम फीचर्स पाएं" : "પ્રીમિયમ સુવિધાઓ મેળવો")}</div>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+            </Card>
+          </div>
         </div>
 
         {/* Quick Stats */}
