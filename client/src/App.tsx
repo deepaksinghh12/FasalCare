@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Mic, TrendingUp, Settings, Wifi, WifiOff } from "lucide-react"
+import { Mic, TrendingUp, Settings } from "lucide-react"
 
 // Types
 type Language = "en" | "gu" | "hi";
@@ -54,7 +54,6 @@ const text = {
 }
 
 function HomePage() {
-  const [isOnline] = useState(true) // Helper to detect online status could be added
   const [language, setLanguage] = useState<Language>("en")
 
   const toggleLanguage = () => {
