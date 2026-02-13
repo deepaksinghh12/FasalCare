@@ -81,12 +81,14 @@ function HomePage() {
           </div>
           <div className="flex items-center gap-2">
             {/* Subscription Icon (Replacing Wifi) */}
-            <Button variant="ghost" size="icon" className="text-yellow-300 hover:text-yellow-100 hover:bg-white/10">
-              <div className="relative">
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping" />
-                <span className="text-xl">👑</span>
-              </div>
-            </Button>
+            <Link to="/subscription">
+              <Button variant="ghost" size="icon" className="text-yellow-300 hover:text-yellow-100 hover:bg-white/10">
+                <div className="relative">
+                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-ping" />
+                  <span className="text-xl">👑</span>
+                </div>
+              </Button>
+            </Link>
 
             <Button
               variant="ghost"
@@ -207,17 +209,19 @@ function HomePage() {
           </div>
 
           {/* Subscription (Teaser) */}
-          <div className="block">
-            <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
-              <div className="p-3 flex items-center gap-4">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center text-2xl">👑</div>
-                <div>
-                  <div className="font-semibold text-purple-900">{language === "en" ? "Upgrade to Pro" : (language === "hi" ? "प्रो में अपग्रेड करें" : "પ્રો પર અપગ્રેડ કરો")}</div>
-                  <div className="text-xs text-purple-700">Get Ad-free experience & Expert support</div>
-                </div>
-              </div>
+          <Link to="/subscription" className="block">
+            <Card className="border-purple-200 hover:shadow-lg transition-all bg-gradient-to-r from-purple-50 to-pink-50 cursor-pointer">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-3 text-purple-800">
+                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">👑</div>
+                  <div>
+                    <div className="font-semibold">{language === "en" ? "FasalCare Pro" : (language === "hi" ? "फसल केयर प्रो" : "ફસલ કેર પ્રો")}</div>
+                    <div className="text-sm text-gray-600 font-normal">{language === "en" ? "Get Premium Features" : (language === "hi" ? "प्रीमium સુવિધાઓ મેળવો" : "પ્રીમિયમ સુવિધાઓ મેળવો")}</div>
+                  </div>
+                </CardTitle>
+              </CardHeader>
             </Card>
-          </div>
+          </Link>
         </div>
 
 
@@ -271,6 +275,8 @@ import ForumPage from "./pages/ForumPage";
 import SettingsPage from "./pages/SettingsPage";
 import VoicePage from "./pages/VoicePage";
 
+import SubscriptionPage from "./pages/SubscriptionPage";
+
 export default function App() {
   return (
     <Router>
@@ -284,6 +290,7 @@ export default function App() {
           <Route path="/weather" element={<WeatherPage />} />
           <Route path="/diagnosis" element={<DiagnosisPage />} />
           <Route path="/forum" element={<ForumPage />} />
+          <Route path="/subscription" element={<SubscriptionPage />} />
         </Routes>
 
         {/* Global Footer */}
