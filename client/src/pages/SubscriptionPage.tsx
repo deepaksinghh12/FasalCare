@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Check, X, Satellite, Zap, CloudLightning, Phone, ArrowLeft } from "lucide-react"
+import { Check, Satellite, Zap, CloudLightning, Phone, ArrowLeft } from "lucide-react"
 
 // Simulated Satellite Map Component
 const SatelliteMapDemo = () => {
