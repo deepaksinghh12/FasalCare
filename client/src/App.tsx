@@ -222,6 +222,21 @@ function HomePage() {
               </CardHeader>
             </Card>
           </Link>
+
+          {/* FasalCare Shop (Teaser) */}
+          <Link to="/shop" className="block">
+            <Card className="border-green-200 hover:shadow-lg transition-all bg-gradient-to-r from-emerald-50 to-teal-50 cursor-pointer">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-3 text-emerald-800">
+                  <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center text-2xl">🛒</div>
+                  <div>
+                    <div className="font-semibold">{language === "en" ? "Agri Store" : (language === "hi" ? "कृषि स्टोर" : "કૃષિ સ્ટોર")}</div>
+                    <div className="text-sm text-emerald-600 font-normal">{language === "en" ? "Buy seeds, fertilizers & more" : (language === "hi" ? "बीज, उर्वरक और बहुत कुछ खरीदें" : "બિયારણ, ખાતર અને વધુ ખરીદો")}</div>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+            </Card>
+          </Link>
         </div>
 
 
@@ -276,6 +291,7 @@ import SettingsPage from "./pages/SettingsPage";
 import VoicePage from "./pages/VoicePage";
 
 import SubscriptionPage from "./pages/SubscriptionPage";
+import ShopPage from "./pages/ShopPage";
 
 export default function App() {
   return (
@@ -291,6 +307,7 @@ export default function App() {
           <Route path="/diagnosis" element={<DiagnosisPage />} />
           <Route path="/forum" element={<ForumPage />} />
           <Route path="/subscription" element={<SubscriptionPage />} />
+          <Route path="/shop" element={<ShopPage />} />
         </Routes>
 
         {/* Global Footer */}
