@@ -28,9 +28,9 @@ export default function MarketPage() {
         setError(null)
         setMarketSummary(null)
         try {
-            // Defaulting to Rajasthan for now as per original code context, could be dynamic later
+            // Defaulting to Gujarat for now as per user request
             const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
-            const response = await fetch(`${API_URL}/api/market?state=Rajasthan&commodity=${commodity}`)
+            const response = await fetch(`${API_URL}/api/market?state=Gujarat&commodity=${commodity}`)
             const data = await response.json()
 
             if (response.ok) {
@@ -143,7 +143,7 @@ export default function MarketPage() {
                 {/* Loading / Error / Data */}
                 <div className="space-y-3">
                     <h3 className="font-semibold text-green-700 flex items-center gap-2">
-                        📈 Live Prices (Rajasthan)
+                        📈 Live Prices (Gujarat)
                         {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                     </h3>
 
