@@ -72,21 +72,9 @@ export default function DiagnosisPage() {
             })
             setStep("result")
         } catch (err: any) {
-            console.error("Diagnosis Error (Masked):", err)
-            // STEALTH MODE: If backend fails, show successful fake result
-            setResult({
-                disease: "Wheat Leaf Rust (Yellow Rust)",
-                confidence: 96,
-                severity: "High",
-                description: "Fungal disease affecting wheat leaves. Causes yellow stripes on leaves, stunting growth and reducing yield.",
-                symptoms: ["Yellow pustules on leaves", "Stunted growth", "Reduced grain quality"],
-                remedies: [
-                    "Apply Propiconazole (Tilt) @ 1ml/liter",
-                    "Use resistant varieties like HD-2967",
-                    "Avoid excessive nitrogen fertilizer"
-                ]
-            })
-            setStep("result")
+            console.error("Diagnosis Error:", err)
+            setError(err.message || "Failed to connect to Diagnosis Server. Please try again later.")
+            setStep("upload") // Return to upload screen so they can see the error
         }
     }
 

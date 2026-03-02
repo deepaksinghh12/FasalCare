@@ -5,6 +5,8 @@ import logging
 from PIL import Image
 from io import BytesIO
 from transformers import pipeline
+import cv2
+import numpy as np
 
 # Configure Logging
 logging.basicConfig(
@@ -25,6 +27,51 @@ app.add_middleware(
 
 CLASSIFIER = None
 MODEL_ID = "linkanjarad/mobilenet_v2_1.0_224-plant-disease-identification"
+
+def auto_crop_image(pil_img: Image.Image) -> Image.Image:
+    """Intelligently slices off excessive background noise around a dominant leaf using HSV color bounding and contours."""
+    try:
+        # Convert PIL to specific OpenCV format
+        open_cv_image = np.array(pil_img)
+        # Convert RGB to BGR 
+        img = open_cv_image[:, :, ::-1].copy()
+        
+        # Convert to HSV color space for easier green/plant detection
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        
+        # Define broad range of green (healthy) and yellow/brown (diseased) colors
+        lower_bound = np.array([20, 20, 20])
+        upper_bound = np.array([100, 255, 255])
+        
+        # Threshold the HSV image to get only plant colors
+        mask = cv2.inRange(hsv, lower_bound, upper_bound)
+        
+        # Find contours
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        
+        if not contours:
+            return pil_img # Fallback: No plant detected, return original
+
+        # Find the largest contour (assuming it's the primary leaf)
+        largest_contour = max(contours, key=cv2.contourArea)
+        
+        # Ignore if the detected blob is incredibly small and likely noise
+        if cv2.contourArea(largest_contour) < 500:
+            return pil_img
+            
+        # Get bounding box coordinates padding slightly
+        x, y, w, h = cv2.boundingRect(largest_contour)
+        
+        # Extract the ROI (Region of Interest)
+        cropped = img[max(0, y-20):y+h+20, max(0, x-20):x+w+20]
+        
+        # Convert back to PIL Image
+        cropped_rgb = cv2.cvtColor(cropped, cv2.COLOR_BGR2RGB)
+        return Image.fromarray(cropped_rgb)
+        
+    except Exception as e:
+        logging.warning(f"Auto-crop failed, falling back to original image: {e}")
+        return pil_img
 
 @app.on_event("startup")
 async def startup_event():
@@ -61,8 +108,11 @@ async def predict(file: UploadFile = File(...)):
         image_data = await file.read()
         image = Image.open(BytesIO(image_data)).convert("RGB")
         
+        # PRE-PROCESSING: Focus attention on the leaf payload
+        cropped_image = auto_crop_image(image)
+        
         # Predict
-        results = CLASSIFIER(image)
+        results = CLASSIFIER(cropped_image)
         # results example: [{'label': 'Tomato___Early_blight', 'score': 0.98}, ...]
         
         top_result = results[0]
