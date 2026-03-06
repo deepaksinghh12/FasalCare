@@ -78,9 +78,11 @@ async def startup_event():
     global CLASSIFIER
     try:
         logging.info(f"Loading Hugging Face model: {MODEL_ID}...")
-        # Explicitly request PyTorch
-        CLASSIFIER = pipeline("image-classification", model=MODEL_ID, framework="pt")
-        logging.info("✅ Model loaded successfully!")
+        # Explicitly request PyTorch and optimize for inference
+        import torch
+        device = 0 if torch.cuda.is_available() else -1
+        CLASSIFIER = pipeline("image-classification", model=MODEL_ID, framework="pt", device=device)
+        logging.info(f"✅ Model loaded successfully on device: {'GPU' if device == 0 else 'CPU'}!")
     except Exception as e:
         import sys
         import traceback
@@ -109,6 +111,8 @@ async def predict(file: UploadFile = File(...)):
         image = Image.open(BytesIO(image_data)).convert("RGB")
         
         # PRE-PROCESSING: Focus attention on the leaf payload
+        # Resize first to speed up auto_crop_image and inference
+        image.thumbnail((512, 512), Image.Resampling.LANCZOS)
         cropped_image = auto_crop_image(image)
         
         # Predict
