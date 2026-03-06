@@ -28,8 +28,11 @@ app.add_middleware(
 CLASSIFIER = None
 MODEL_ID = "linkanjarad/mobilenet_v2_1.0_224-plant-disease-identification"
 
-def auto_crop_image(pil_img: Image.Image) -> Image.Image:
-    """Intelligently slices off excessive background noise around a dominant leaf using HSV color bounding and contours."""
+def auto_crop_image(pil_img: Image.Image) -> tuple[Image.Image, bool]:
+    """
+    Intelligently slices off excessive background noise around a dominant leaf using HSV color bounding and contours.
+    Returns: (Cropped_Image or Original, is_plant_detected boolean)
+    """
     try:
         # Convert PIL to specific OpenCV format
         open_cv_image = np.array(pil_img)
@@ -46,18 +49,28 @@ def auto_crop_image(pil_img: Image.Image) -> Image.Image:
         # Threshold the HSV image to get only plant colors
         mask = cv2.inRange(hsv, lower_bound, upper_bound)
         
+        # Calculate the percentage of plant-colored pixels in the entire image
+        total_pixels = open_cv_image.shape[0] * open_cv_image.shape[1]
+        plant_pixels = cv2.countNonZero(mask)
+        plant_ratio = plant_pixels / total_pixels
+        
+        # If less than 2% of the image contains plant colors, it's likely not a plant
+        if plant_ratio < 0.02:
+            logging.warning(f"Rejection: Low plant pixel ratio detected ({plant_ratio:.2%})")
+            return (pil_img, False)
+
         # Find contours
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         
         if not contours:
-            return pil_img # Fallback: No plant detected, return original
+            return (pil_img, False) # No plant contour detected
 
         # Find the largest contour (assuming it's the primary leaf)
         largest_contour = max(contours, key=cv2.contourArea)
         
         # Ignore if the detected blob is incredibly small and likely noise
         if cv2.contourArea(largest_contour) < 500:
-            return pil_img
+            return (pil_img, False)
             
         # Get bounding box coordinates padding slightly
         x, y, w, h = cv2.boundingRect(largest_contour)
@@ -67,11 +80,11 @@ def auto_crop_image(pil_img: Image.Image) -> Image.Image:
         
         # Convert back to PIL Image
         cropped_rgb = cv2.cvtColor(cropped, cv2.COLOR_BGR2RGB)
-        return Image.fromarray(cropped_rgb)
+        return (Image.fromarray(cropped_rgb), True)
         
     except Exception as e:
-        logging.warning(f"Auto-crop failed, falling back to original image: {e}")
-        return pil_img
+        logging.warning(f"Auto-crop/filtering failed, falling back to original image: {e}")
+        return (pil_img, True)  # Fallback to leniency on error
 
 @app.on_event("startup")
 async def startup_event():
@@ -121,7 +134,17 @@ def predict(file: UploadFile = File(...)):
         # PRE-PROCESSING: Focus attention on the leaf payload
         # Resize first to speed up auto_crop_image and inference
         image.thumbnail((512, 512), Image.Resampling.LANCZOS)
-        cropped_image = auto_crop_image(image)
+        
+        # Filter non-plant images and crop
+        cropped_image, is_plant = auto_crop_image(image)
+        
+        if not is_plant:
+            logging.info("Image rejected: No plant detected.")
+            return {
+                "class": "Not a Plant Detected",
+                "confidence": 0.0,
+                "recommendation": "Please upload a clear image of a crop leaf."
+            }
         
         # Predict
         results = CLASSIFIER(cropped_image)
