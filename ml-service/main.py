@@ -82,6 +82,12 @@ async def startup_event():
         import torch
         device = 0 if torch.cuda.is_available() else -1
         CLASSIFIER = pipeline("image-classification", model=MODEL_ID, framework="pt", device=device)
+        
+        # Warm-up the model to avoid "cold start" latency for the first user
+        logging.info("Warming up model with dummy image...")
+        dummy_image = Image.new('RGB', (224, 224), color = 'green')
+        CLASSIFIER(dummy_image)
+        
         logging.info(f"✅ Model loaded successfully on device: {'GPU' if device == 0 else 'CPU'}!")
     except Exception as e:
         import sys
@@ -101,13 +107,15 @@ async def health():
     return {"status": "ok", "model_loaded": CLASSIFIER is not None}
 
 @app.post("/predict")
-async def predict(file: UploadFile = File(...)):
+def predict(file: UploadFile = File(...)):
     if CLASSIFIER is None:
         return {"error": "Model not loaded", "class": "Error", "confidence": 0}
 
     try:
         logging.info(f"Processing image: {file.filename}")
-        image_data = await file.read()
+        # When using `def` instead of `async def` for the endpoint, FastAPI runs it in an external threadpool. 
+        # Using `file.file.read()` reads synchronously from the SpooledTemporaryFile bypassing the async wrapper.
+        image_data = file.file.read()
         image = Image.open(BytesIO(image_data)).convert("RGB")
         
         # PRE-PROCESSING: Focus attention on the leaf payload
