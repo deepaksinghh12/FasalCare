@@ -76,7 +76,7 @@ function HomePage() {
         <div className="flex items-center justify-between max-w-md mx-auto">
           <div className="flex items-center gap-3 w-3/4">
             <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center flex-shrink-0 overflow-hidden border border-white">
-              <img src="/favicon.png" alt="Logo" className="w-full h-full object-cover scale-105" />
+              <img src="/logo.jpg" alt="Logo" className="w-full h-full object-cover scale-105" />
             </div>
             <div className="flex flex-col justify-center">
               <h1 className="text-xl font-bold leading-none mb-1">{text[language].title}</h1>
@@ -220,7 +220,7 @@ function HomePage() {
             {[
               {
                 id: 1,
-                title: language === "en" ? "Government announces new subsidy for solar pumps under PM-KUSUM" : "सरकार ने पीएम-कुसुम के तहत सोलर पंपों के लिए नई सब्सिडी की घोषणा की",
+                title: language === "en" ? "Government announces new subsidy for solar pumps under PM-KUSUM" : (language === "hi" ? "सरकार ने पीएम-कुसुम के तहत सोलर पंपों के लिए नई सब्सिडी की घोषणा की" : "સરકારે PM-KUSUM અંતર્ગત સોલાર પંપ માટે નવી સબસિડીની જાહેરાત કરી"),
                 source: "AgriNews Today",
                 time: "2 hours ago",
                 img: "☀️",
@@ -228,7 +228,7 @@ function HomePage() {
               },
               {
                 id: 2,
-                title: language === "en" ? "Monsoon expected to arrive early this year in central farming regions" : "मध्य कृषि क्षेत्रों में इस साल मानसून जल्दी आने की उम्मीद",
+                title: language === "en" ? "Monsoon expected to arrive early this year in central farming regions" : (language === "hi" ? "मध्य कृषि क्षेत्रों में इस साल मानसून जल्दी आने की उम्मीद" : "આ વર્ષે મધ્ય ખેતી વિસ્તારોમાં ચોમાસું વહેલું આવવાની સંભાવના છે"),
                 source: "Weather Dept",
                 time: "5 hours ago",
                 img: "🌧️",
@@ -236,7 +236,7 @@ function HomePage() {
               },
               {
                 id: 3,
-                title: language === "en" ? "Wheat prices hitting record high in major mandis ahead of harvest season" : "कटाई के मौसम से पहले प्रमुख मंडियों में गेहूं की कीमतें रिकॉर्ड ऊंचाई पर",
+                title: language === "en" ? "Wheat prices hitting record high in major mandis ahead of harvest season" : (language === "hi" ? "कटाई के मौसम से पहले प्रमुख मंडियों में गेहूं की कीमतें रिकॉर्ड ऊंचाई पर" : "લણણીની સિઝન પહેલા મોટી મંડીઓમાં ઘઉંના ભાવ રેકોર્ડ ઉંચાઈએ પહોંચ્યા"),
                 source: "Market Watch",
                 time: "1 day ago",
                 img: "🌾",
@@ -307,7 +307,7 @@ export default function App() {
       <div className="fixed inset-0 z-[100] bg-gradient-to-b from-green-50 to-green-100 flex flex-col items-center justify-center p-8">
         <div className="flex-1 flex flex-col items-center justify-center animate-pulse">
           <div className="w-32 h-32 mb-6 rounded-full bg-white shadow-xl flex items-center justify-center p-4 border-4 border-green-500 overflow-hidden relative">
-            <img src="/favicon.png" alt="FasalCare Logo" className="w-full h-full object-contain relative z-10" />
+            <img src="/logo.jpg" alt="FasalCare Logo" className="w-full h-full object-contain relative z-10" />
             <div className="absolute inset-0 bg-green-500/20 animate-ping rounded-full z-0"></div>
           </div>
           <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-700 to-emerald-500 tracking-tight drop-shadow-sm mb-2">FasalCare</h1>
